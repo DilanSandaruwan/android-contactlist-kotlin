@@ -13,6 +13,9 @@
         android:theme="@style/Theme.CTContactListApplication"
         tools:targetApi="31">
         <activity
+            android:name=".views.activities.ContactListActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.activities.MainActivity"
             android:exported="true">
             <intent-filter>
