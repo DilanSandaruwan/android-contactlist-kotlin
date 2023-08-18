@@ -15,8 +15,8 @@ class ContactListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_contact_list)
 
-        binding.btnArrowBack.setOnClickListener{
-            startActivity(Intent(this@ContactListActivity,MainActivity::class.java))
+        binding.btnArrowBack.setOnClickListener {
+            startActivity(Intent(this@ContactListActivity, MainActivity::class.java))
             this.finish()
         }
     }

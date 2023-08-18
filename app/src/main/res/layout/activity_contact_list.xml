@@ -16,15 +16,15 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/black"
-            android:layout_margin="10dp">
+            android:layout_margin="10dp"
+            android:background="@color/black">
 
             <ImageButton
                 android:id="@+id/btn_arrow_back"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginStart="10dp"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_round_arrow_back_24" />
 
@@ -46,15 +46,21 @@
                 android:background="@color/transparent" />
         </LinearLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_container"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_contact_list"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/header"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:background="@color/white" />
+
+                <include android:layout_below="@+id/fragment_container" layout="@layout/contact_card_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
     </RelativeLayout>
+
 </layout>
