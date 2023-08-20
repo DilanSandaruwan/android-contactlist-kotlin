@@ -46,20 +46,15 @@
                 android:background="@color/transparent" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_contact_list"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/header"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/white" />
+            android:layout_margin="20dp"
+            android:background="@color/grey" />
 
-                <include android:layout_below="@+id/fragment_container" layout="@layout/contact_card_item"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
 
     </RelativeLayout>
 
