@@ -9,20 +9,13 @@ import com.dilan.example.android.ctcontactlistapplication.R
 import com.dilan.example.android.ctcontactlistapplication.databinding.ActivityContactListBinding
 import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModel
-import org.json.JSONArray
-
-import org.json.JSONObject
-
-import java.io.FileReader
-
-
-
 
 class ContactListActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityContactListBinding
+    private val viewModel: ContactListViewModel by viewModels()
     lateinit var contactList: ArrayList<ContactData>
-    val viewModel : ContactListViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_contact_list)
@@ -36,10 +29,24 @@ class ContactListActivity : AppCompatActivity() {
 
     }
 
-    private fun initiateContactsList():ArrayList<ContactData>{
+    private fun initiateContactsList(): ArrayList<ContactData> {
         contactList = ArrayList()
-        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
+        contactList.add(
+            ContactData(
+                "Julee",
+                "Carnier",
+                "+94 862671438",
+                "jcarnier0@shutterfly.com"
+            )
+        )
+        contactList.add(
+            ContactData(
+                "Natalie",
+                "Graham",
+                "+94 862671423",
+                "ngrahm10@shutterfly.com"
+            )
+        )
 //        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
 //        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
 //        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
@@ -50,17 +57,5 @@ class ContactListActivity : AppCompatActivity() {
 //        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
 
         return contactList
-    }
-
-    fun addNewContactData(){
-
-    }
-
-    fun updateContact(){
-
-    }
-
-    fun deleteContact(){
-
     }
 }
