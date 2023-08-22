@@ -41,7 +41,14 @@ class ContactListAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.txtContactName.text = item.firstName
+        holder.txtContactName.text =
+            if (item.firstName.isNullOrEmpty()) {
+                item.lastName.toString()
+            } else if (item.lastName.isNullOrEmpty()) {
+                item.firstName.toString()
+            } else {
+                "${item.firstName} ${item.lastName}"
+            }
         holder.etFirstName.setText(item.firstName)
         holder.etLastName.setText(item.lastName)
         holder.etPhone1.setText(item.phoneNumber1)

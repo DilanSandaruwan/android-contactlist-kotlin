@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -16,6 +14,8 @@ import com.dilan.example.android.ctcontactlistapplication.R
 import com.dilan.example.android.ctcontactlistapplication.databinding.FragmentDetailsBinding
 import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModel
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 
 class DetailsFragment : Fragment() {
 
@@ -39,7 +39,8 @@ class DetailsFragment : Fragment() {
         binding.btnEdit.setOnClickListener {
             binding.etContactFirstName.isEnabled = true
             binding.etContactLastName.isEnabled = true
-            binding.etContactNumber1.isEnabled = false
+            binding.etContactNumber1.isEnabled = (args.contactData == null)
+
             binding.etContactEmail.isEnabled = true
         }
 
@@ -57,7 +58,18 @@ class DetailsFragment : Fragment() {
                     binding.etContactEmail.text.toString(),
                 )
             }
-            gotoContactsListFragment(true, contactData)
+            if (checkSavingAvailability() && validateEmail(binding.etContactEmail) && validateMobile(
+                    binding.etContactNumber1
+                )
+            ) {
+                gotoContactsListFragment(true, contactData)
+            } else {
+                Snackbar.make(
+                    binding.lytDetailCordinator,
+                    getString(R.string.contact_validation_msg),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
         }
         return binding.root
     }
@@ -82,16 +94,47 @@ class DetailsFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
-    fun checkSavingAvailability() {
-        if (TextUtils.isEmpty(
-                binding.etContactNumber1.text.toString()
-            ) && (TextUtils.isEmpty(binding.etContactFirstName.text.toString()) || TextUtils.isEmpty(
+    private fun checkSavingAvailability(): Boolean {
+        return if (!TextUtils.isEmpty(binding.etContactNumber1.text.toString())) {
+            !(TextUtils.isEmpty(binding.etContactFirstName.text.toString())) || !(TextUtils.isEmpty(
                 binding.etContactLastName.text.toString()
             ))
-        ) {
-            binding.btnSave.visibility = VISIBLE
         } else {
-            binding.btnSave.visibility = GONE
+            false
+        }
+
+    }
+
+    private fun validateEmail(view: TextInputEditText): Boolean {
+        val email = view.text.toString().trim()
+        return if (!TextUtils.isEmpty(email)) {
+            if (email.matches(Regex("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"))) {
+                view.error = null
+                view.isEnabled = false
+                true
+            } else {
+                view.error = getString(R.string.error_email)
+                view.isEnabled = true
+                false
+            }
+        } else {
+            view.error = null
+            view.isEnabled = true
+            true
+        }
+
+    }
+
+    private fun validateMobile(view: TextInputEditText): Boolean {
+        val str = view.text.toString().trim()
+        return if (str.startsWith("0")) {
+            view.error = null
+            view.isEnabled = false
+            true
+        } else {
+            view.error = getString(R.string.error_contact)
+            view.isEnabled = true
+            false
         }
     }
 

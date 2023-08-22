@@ -47,15 +47,6 @@ class ContactListActivity : AppCompatActivity() {
                 "ngrahm10@shutterfly.com"
             )
         )
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-//        contactList.add(ContactData("Julee","Carnier","+94 862671438","jcarnier0@shutterfly.com"))
-
         return contactList
     }
 }
