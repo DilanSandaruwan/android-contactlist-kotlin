@@ -2,10 +2,11 @@
     <string name="app_name">CT Contact List Application</string>
     <string name="contacts">Contacts</string>
     <string name="fab_content_description">fab</string>
+    <string name="search_text">Search</string>
     <string name="contact_validation_msg">Contact number is a must \&amp; you need to give at least one name</string>
     <string name="error_email">"Invalid Email"</string>
     <string name="error_contact">"Must start with 0 \&amp; should contain 10 digits"</string>
-    <string name="valid_name">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz</string>
+    <string name="valid_name">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="valid_email">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_.@-</string>
     <string name="valid_phone">+9876543210</string>
 </resources>

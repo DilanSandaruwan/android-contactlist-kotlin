@@ -19,23 +19,33 @@ import com.google.android.material.textfield.TextInputEditText
 
 class DetailsFragment : Fragment() {
 
+    // Declare lateinit variables
     lateinit var binding: FragmentDetailsBinding
     lateinit var viewModel: ContactListViewModel
 
+    // Get arguments using SafeArgs
     private val args: DetailsFragmentArgs by navArgs()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
+    // Function called when the fragment is created
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        // Initialize ViewModel using ViewModelProvider
         viewModel = ViewModelProvider(requireActivity())[ContactListViewModel::class.java]
+
+        // Inflate the layout using DataBinding
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_details, container, false)
+
+        // Bind the ViewModel to the layout
         binding.lifecycleOwner = viewLifecycleOwner
         binding.detailVM = viewModel
 
+        // Set up edit button click listener
         binding.btnEdit.setOnClickListener {
             binding.etContactFirstName.isEnabled = true
             binding.etContactLastName.isEnabled = true
@@ -44,10 +54,12 @@ class DetailsFragment : Fragment() {
             binding.etContactEmail.isEnabled = true
         }
 
+        // Set up close button click listener
         binding.btnClose.setOnClickListener {
             gotoContactsListFragment(false, null)
         }
 
+        // Set up save button click listener
         binding.btnSave.setOnClickListener {
             var contactData = viewModel.selectedContact.value
             if (contactData == null) {
@@ -74,9 +86,11 @@ class DetailsFragment : Fragment() {
         return binding.root
     }
 
+    // Function called when the fragment's view is created
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // If args contain contactData, set it in ViewModel
         val contactData = args.contactData
         if (contactData != null) {
             viewModel.setSelectedContactDetails(contactData)
@@ -86,6 +100,7 @@ class DetailsFragment : Fragment() {
 
     }
 
+    // Function to navigate to the ContactsListFragment
     private fun gotoContactsListFragment(isToSave: Boolean, objToSave: ContactData?) {
         viewModel.addNewContactData(false)
         val action =
@@ -94,6 +109,7 @@ class DetailsFragment : Fragment() {
         view?.findNavController()?.navigate(action)
     }
 
+    // Function to check if saving is possible based on entered data
     private fun checkSavingAvailability(): Boolean {
         return if (!TextUtils.isEmpty(binding.etContactNumber1.text.toString())) {
             !(TextUtils.isEmpty(binding.etContactFirstName.text.toString())) || !(TextUtils.isEmpty(
@@ -105,6 +121,7 @@ class DetailsFragment : Fragment() {
 
     }
 
+    // Function to validate email input
     private fun validateEmail(view: TextInputEditText): Boolean {
         val email = view.text.toString().trim()
         return if (!TextUtils.isEmpty(email)) {
@@ -125,6 +142,7 @@ class DetailsFragment : Fragment() {
 
     }
 
+    // Function to validate mobile input
     private fun validateMobile(view: TextInputEditText): Boolean {
         val str = view.text.toString().trim()
         return if (str.startsWith("0")) {
