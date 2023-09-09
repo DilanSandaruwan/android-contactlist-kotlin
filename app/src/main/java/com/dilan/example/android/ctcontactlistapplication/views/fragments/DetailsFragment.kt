@@ -5,6 +5,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -90,6 +91,8 @@ class DetailsFragment : Fragment() {
     // Function called when the fragment's view is created
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.findViewById<ImageButton>(R.id.btn_arrow_back)?.visibility = View.INVISIBLE
 
         // If args contain contactData, set it in ViewModel
         val contactData = args.contactData

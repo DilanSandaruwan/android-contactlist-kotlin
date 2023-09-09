@@ -3,8 +3,10 @@ package com.dilan.example.android.ctcontactlistapplication.views.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -82,6 +84,8 @@ class ContactListFragment : Fragment() {
         binding.fab.setOnClickListener {
             viewModel.addNewContactData(true)
         }
+
+        activity?.findViewById<ImageButton>(R.id.btn_arrow_back)?.visibility = VISIBLE
 
         // Observe LiveData for main contact list and update the adapter
         viewModel.contactList.observe(viewLifecycleOwner) {
