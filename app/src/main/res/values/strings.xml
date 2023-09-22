@@ -9,4 +9,7 @@
     <string name="valid_name">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="valid_email">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_.@-</string>
     <string name="valid_phone">+9876543210</string>
+
+    <!--    formatted texts-->
+    <string name="first_name_with_last_name">%1$s %2$s</string>
 </resources>

@@ -47,11 +47,12 @@ class DetailsFragment : Fragment() {
 
         // Set up edit button click listener
         binding.btnEdit.setOnClickListener {
-            binding.etContactFirstName.isEnabled = true
-            binding.etContactLastName.isEnabled = true
-            binding.etContactNumber1.isEnabled = (args.contactData == null)
-
-            binding.etContactEmail.isEnabled = true
+            with(binding) {
+                etContactFirstName.isEnabled = true
+                etContactLastName.isEnabled = true
+                etContactNumber.isEnabled = args.contactData == null
+                etContactEmail.isEnabled = true
+            }
         }
 
         // Set up close button click listener
@@ -62,16 +63,16 @@ class DetailsFragment : Fragment() {
         // Set up save button click listener
         binding.btnSave.setOnClickListener {
             var contactData = viewModel.selectedContact.value
-            if (contactData == null) {
-                contactData = ContactData(
+
+            contactData = contactData ?: ContactData(
                     binding.etContactFirstName.text.toString(),
                     binding.etContactLastName.text.toString(),
-                    binding.etContactNumber1.text.toString(),
+                    binding.etContactNumber.text.toString(),
                     binding.etContactEmail.text.toString(),
                 )
-            }
+
             if (checkSavingAvailability() && validateEmail(binding.etContactEmail) && validateMobile(
-                    binding.etContactNumber1
+                    binding.etContactNumber
                 )
             ) {
                 gotoContactsListFragment(true, contactData)
@@ -111,7 +112,7 @@ class DetailsFragment : Fragment() {
 
     // Function to check if saving is possible based on entered data
     private fun checkSavingAvailability(): Boolean {
-        return if (!TextUtils.isEmpty(binding.etContactNumber1.text.toString())) {
+        return if (!TextUtils.isEmpty(binding.etContactNumber.text.toString())) {
             !(TextUtils.isEmpty(binding.etContactFirstName.text.toString())) || !(TextUtils.isEmpty(
                 binding.etContactLastName.text.toString()
             ))

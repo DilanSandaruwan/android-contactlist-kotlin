@@ -75,4 +75,38 @@ class ContactListViewModel() : ViewModel() {
     fun addNewContactData(navToDetails: Boolean) {
         _navigateToAddNewContact.value = navToDetails
     }
+
+    /**
+     * Create and set an ArrayList of initial contact data.
+     */
+    private fun initiateContactsList() {
+        var contactList: ArrayList<ContactData> = ArrayList()
+
+        // Add sample contact data to the list
+        contactList.apply {
+            add(
+                ContactData(
+                    "Julee",
+                    "Carnier",
+                    "0762671438",
+                    "jcarnier0@shutterfly.com"
+                )
+            )
+            add(
+                ContactData(
+                    "Natalie",
+                    "Graham",
+                    "0762671423",
+                    "ngrahm10@shutterfly.com"
+                )
+            )
+        }
+
+        // Set the initialized contact list
+        setContactList(contactList)
+    }
+
+    init {
+        initiateContactsList()
+    }
 }

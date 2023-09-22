@@ -7,14 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.dilan.example.android.ctcontactlistapplication.R
 import com.dilan.example.android.ctcontactlistapplication.databinding.ActivityContactListBinding
-import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModel
 
 class ContactListActivity : AppCompatActivity() {
 
     // Declare lateinit variables
     lateinit var binding: ActivityContactListBinding
-    lateinit var contactList: ArrayList<ContactData>
 
     // Initialize ContactListViewModel using viewModels extension function
     private val viewModel: ContactListViewModel by viewModels()
@@ -28,8 +26,10 @@ class ContactListActivity : AppCompatActivity() {
         // Set up click listener for back button
         binding.btnArrowBack.setOnClickListener {
             // Navigate back to the main activity
-            startActivity(Intent(this@ContactListActivity, MainActivity::class.java))
-            this.finish()
+            // Clear the activity stack and start the MainActivity
+            val intent = Intent(this@ContactListActivity, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
 
         // Set up click listener for exit button
@@ -38,37 +38,6 @@ class ContactListActivity : AppCompatActivity() {
             this.finish()
         }
 
-        // Initialize and set up the initial contacts list
-        val list = initiateContactsList()
-        viewModel.setContactList(list)
-
     }
 
-    /**
-     * Create and return an ArrayList of initial contact data.
-     */
-    private fun initiateContactsList(): ArrayList<ContactData> {
-        contactList = ArrayList()
-
-        // Add sample contact data to the list
-        contactList.add(
-            ContactData(
-                "Julee",
-                "Carnier",
-                "0762671438",
-                "jcarnier0@shutterfly.com"
-            )
-        )
-        contactList.add(
-            ContactData(
-                "Natalie",
-                "Graham",
-                "0762671423",
-                "ngrahm10@shutterfly.com"
-            )
-        )
-
-        // Return the initialized contact list
-        return contactList
-    }
 }

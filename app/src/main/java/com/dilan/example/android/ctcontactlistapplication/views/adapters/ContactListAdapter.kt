@@ -1,33 +1,53 @@
 package com.dilan.example.android.ctcontactlistapplication.views.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.dilan.example.android.ctcontactlistapplication.R
+import com.dilan.example.android.ctcontactlistapplication.databinding.ContactCardItemBinding
 import com.dilan.example.android.ctcontactlistapplication.model.ContactData
-import com.google.android.material.textfield.TextInputEditText
 
+/**
+ * Adapter class for displaying the list of contact data in a RecyclerView using data binding.
+ *
+ * @param itemClickListener An interface to handle item click events.
+ * @param deleteClickListener An interface to handle delete click events.
+ */
 class ContactListAdapter(
     private val itemClickListener: OnItemClickListener,
     private val deleteClickListener: OnDeleteClickListener,
 ) : ListAdapter<ContactData, ContactListAdapter.ViewHolder>(diff_util) {
 
     // Declare and initialize views within the item layout
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var txtContactName = itemView.findViewById<TextView>(R.id.contactName)
-        var etFirstName: TextInputEditText = itemView.findViewById(R.id.et_contact_first_name)
-        var etLastName: TextInputEditText =
-            itemView.findViewById(R.id.et_contact_last_name)
-        var etPhone1: TextInputEditText =
-            itemView.findViewById(R.id.et_contact_number_1)
-        var etEmail: TextInputEditText =
-            itemView.findViewById(R.id.et_contact_email)
+    class ViewHolder(private val binding: ContactCardItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(
+            item: ContactData,
+            itemClickListener: OnItemClickListener,
+            deleteClickListener: OnDeleteClickListener
+        ) {
+            binding.apply {
+                // Bind data to the views using data binding
+                contactName.text = when {
+                    item.firstName.isNullOrEmpty() && !item.lastName.isNullOrEmpty() -> item.lastName.toString()
+                    !item.firstName.isNullOrEmpty() && item.lastName.isNullOrEmpty() -> item.firstName.toString()
+                    else -> "${item.firstName} ${item.lastName}"
+                }
+
+                // Set click listeners using data binding
+                root.setOnClickListener { itemClickListener.itemClick(item) }
+                btnDelete.setOnClickListener { deleteClickListener.deleteClick(item) }
+
+                // Set the current item to the 'contact' variable
+                contact = item
+
+                // Execute pending bindings to update the UI
+                executePendingBindings()
+
+            }
+        }
+
     }
 
     // Create the ViewHolder by inflating the item layout
@@ -35,40 +55,19 @@ class ContactListAdapter(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.contact_card_item, parent, false)
-        return ViewHolder(view)
+        val binding = ContactCardItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ViewHolder(binding)
     }
 
     // Bind data to the ViewHolder views
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
+        holder.bind(item, itemClickListener, deleteClickListener)
 
-        // Display contact name based on available data
-        holder.txtContactName.text =
-            if (item.firstName.isNullOrEmpty()) {
-                item.lastName.toString()
-            } else if (item.lastName.isNullOrEmpty()) {
-                item.firstName.toString()
-            } else {
-                "${item.firstName} ${item.lastName}"
-            }
-
-        // Set data to the EditText views
-        holder.etFirstName.setText(item.firstName)
-        holder.etLastName.setText(item.lastName)
-        holder.etPhone1.setText(item.phoneNumber1)
-        holder.etEmail.setText(item.email)
-
-        // Set click listener for item click
-        holder.itemView.setOnClickListener {
-            itemClickListener.itemClick(item)
-        }
-
-        // Set click listener for delete button
-        holder.itemView.findViewById<ImageView>(R.id.btn_delete).setOnClickListener {
-            deleteClickListener.deleteClick(item)
-        }
     }
 
     // Interface to handle item click events
@@ -88,7 +87,7 @@ class ContactListAdapter(
         val diff_util = object : DiffUtil.ItemCallback<ContactData>() {
 
             override fun areItemsTheSame(oldItem: ContactData, newItem: ContactData): Boolean {
-                return oldItem.phoneNumber1 == newItem.phoneNumber1
+                return oldItem.phoneNumber == newItem.phoneNumber
             }
 
             override fun areContentsTheSame(
