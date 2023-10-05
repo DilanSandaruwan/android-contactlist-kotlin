@@ -10,17 +10,17 @@ import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 @Dao
 interface ContactDao {
     @Insert
-    suspend fun insertUser(contactData: ContactData): Long
+    suspend fun insertContact(contactData: ContactData): Long
 
     @Query("SELECT * FROM contact_table")
-    suspend fun getAllUsers(): List<ContactData>
+    suspend fun getAllContacts(): List<ContactData>
 
     @Update
-    suspend fun updateUser(user: ContactData)
+    suspend fun updateContact(contactData: ContactData): Int
 
     @Delete
-    suspend fun deleteUser(user: ContactData)
+    suspend fun deleteContact(contactData: ContactData): Int
 
     @Query("DELETE FROM contact_table")
-    suspend fun deleteAllUsers()
+    suspend fun deleteAllContacts()
 }

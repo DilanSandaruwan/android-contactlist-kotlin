@@ -8,7 +8,7 @@ import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 
 @Database(entities = [ContactData::class], version = 1)
 abstract class ContactDatabase : RoomDatabase() {
-    abstract fun userDao(): ContactDao
+    abstract fun contactDao(): ContactDao
 
     companion object {
         @Volatile
@@ -20,8 +20,8 @@ abstract class ContactDatabase : RoomDatabase() {
                 ) {
                     INSTANCE ?: Room.databaseBuilder(
                         context.applicationContext,
-                        ContactDatabase::class .java,
-                        "user_database"
+                        ContactDatabase::class.java,
+                        "contact_database"
                     )
                         .fallbackToDestructiveMigration()
                         .build()
