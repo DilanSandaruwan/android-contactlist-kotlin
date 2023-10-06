@@ -1,15 +1,20 @@
 package com.dilan.example.android.ctcontactlistapplication.viewmodels
 
+import android.util.Log
 import androidx.databinding.Bindable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.dilan.example.android.ctcontactlistapplication.model.ContactData
+import com.dilan.example.android.ctcontactlistapplication.repository.ContactRepository
+import com.dilan.example.android.ctcontactlistapplication.repository.ContactRepositoryImpl
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel class responsible for managing contact data and navigation state.
  */
-class ContactListViewModel() : ViewModel() {
+class ContactListViewModel(private val contactRepo: ContactRepository) : ViewModel() {
 
     // Private MutableLiveData to hold the main list of contacts.
     private var _contactList = MutableLiveData<List<ContactData>>()
@@ -80,26 +85,12 @@ class ContactListViewModel() : ViewModel() {
      * Create and set an ArrayList of initial contact data.
      */
     private fun initiateContactsList() {
-        var contactList: ArrayList<ContactData> = ArrayList()
+        var contactList: List<ContactData> = mutableListOf()
 
         // Add sample contact data to the list
-        contactList.apply {
-            add(
-                ContactData(
-                    "Julee",
-                    "Carnier",
-                    "0762671438",
-                    "jcarnier0@shutterfly.com"
-                )
-            )
-            add(
-                ContactData(
-                    "Natalie",
-                    "Graham",
-                    "0762671423",
-                    "ngrahm10@shutterfly.com"
-                )
-            )
+        viewModelScope.launch {
+            contactList = contactRepo.getContacts()
+            Log.e("CONTACTS_LIST", "initiateContactsList: $contactList", )
         }
 
         // Set the initialized contact list

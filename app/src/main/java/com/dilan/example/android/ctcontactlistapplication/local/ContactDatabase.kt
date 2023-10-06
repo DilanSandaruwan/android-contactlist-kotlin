@@ -19,7 +19,7 @@ abstract class ContactDatabase : RoomDatabase() {
                     this
                 ) {
                     INSTANCE ?: Room.databaseBuilder(
-                        context.applicationContext,
+                        context,
                         ContactDatabase::class.java,
                         "contact_database"
                     )

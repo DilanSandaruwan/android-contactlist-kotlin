@@ -27,7 +27,7 @@ data class ContactData(
     var lastName: String?,
     var phoneNumber: String?,
     var email: String?,
-)
+) : Serializable
 
 /*
 data class ContactData(

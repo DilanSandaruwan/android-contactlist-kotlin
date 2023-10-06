@@ -15,6 +15,7 @@ import com.dilan.example.android.ctcontactlistapplication.R
 import com.dilan.example.android.ctcontactlistapplication.databinding.FragmentDetailsBinding
 import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModel
+import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModelProviderFactory
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 
@@ -22,10 +23,18 @@ class DetailsFragment : Fragment() {
 
     // Declare lateinit variables
     lateinit var binding: FragmentDetailsBinding
-    lateinit var viewModel: ContactListViewModel
 
     // Get arguments using SafeArgs
     private val args: DetailsFragmentArgs by navArgs()
+
+    /**---After Creating ViewModelFactory START---**/
+    private val viewModel: ContactListViewModel by lazy {
+        val viewModelProviderFactory = ContactListViewModelProviderFactory()
+        ViewModelProvider(this, viewModelProviderFactory)[ContactListViewModel::class.java]
+    }
+
+    /**---After Creating ViewModelFactory FINISH---**/
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -35,9 +44,6 @@ class DetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        // Initialize ViewModel using ViewModelProvider
-        viewModel = ViewModelProvider(requireActivity())[ContactListViewModel::class.java]
 
         // Inflate the layout using DataBinding
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_details, container, false)
@@ -66,11 +72,11 @@ class DetailsFragment : Fragment() {
             var contactData = viewModel.selectedContact.value
 
             contactData = contactData ?: ContactData(
-                    binding.etContactFirstName.text.toString(),
-                    binding.etContactLastName.text.toString(),
-                    binding.etContactNumber.text.toString(),
-                    binding.etContactEmail.text.toString(),
-                )
+                firstName = binding.etContactFirstName.text.toString(),
+                lastName = binding.etContactLastName.text.toString(),
+                phoneNumber = binding.etContactNumber.text.toString(),
+                email = binding.etContactEmail.text.toString(),
+            )
 
             if (checkSavingAvailability() && validateEmail(binding.etContactEmail) && validateMobile(
                     binding.etContactNumber

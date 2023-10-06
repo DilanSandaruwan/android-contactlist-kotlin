@@ -19,6 +19,7 @@ import com.dilan.example.android.ctcontactlistapplication.R
 import com.dilan.example.android.ctcontactlistapplication.databinding.FragmentContactListBinding
 import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModel
+import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModelProviderFactory
 import com.dilan.example.android.ctcontactlistapplication.views.adapters.ContactListAdapter
 import java.util.Locale
 
@@ -26,9 +27,16 @@ class ContactListFragment : Fragment() {
 
     // Declare lateinit variables
     lateinit var binding: FragmentContactListBinding
-    lateinit var viewModel: ContactListViewModel
     lateinit var ctAdapter: ContactListAdapter
     val args: ContactListFragmentArgs by navArgs()
+
+    /**---After Creating ViewModelFactory START---**/
+    private val viewModel: ContactListViewModel by lazy {
+        val viewModelProviderFactory = ContactListViewModelProviderFactory()
+        ViewModelProvider(this, viewModelProviderFactory)[ContactListViewModel::class.java]
+    }
+
+    /**---After Creating ViewModelFactory FINISH---**/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +50,6 @@ class ContactListFragment : Fragment() {
         // Inflate the layout using DataBinding
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_contact_list, container, false)
-
-        // Initialize ViewModel using ViewModelProvider
-        viewModel = ViewModelProvider(requireActivity())[ContactListViewModel::class.java]
 
         // Bind the ViewModel to the layout
         binding.lifecycleOwner = this
