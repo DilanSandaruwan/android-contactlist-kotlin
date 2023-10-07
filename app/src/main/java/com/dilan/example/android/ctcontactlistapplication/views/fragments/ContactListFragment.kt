@@ -19,6 +19,7 @@ import com.dilan.example.android.ctcontactlistapplication.R
 import com.dilan.example.android.ctcontactlistapplication.databinding.FragmentContactListBinding
 import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModel
+import com.dilan.example.android.ctcontactlistapplication.viewmodels.ContactListViewModelProviderFactory
 import com.dilan.example.android.ctcontactlistapplication.views.adapters.ContactListAdapter
 import java.util.Locale
 
@@ -26,9 +27,17 @@ class ContactListFragment : Fragment() {
 
     // Declare lateinit variables
     lateinit var binding: FragmentContactListBinding
-    lateinit var viewModel: ContactListViewModel
     lateinit var ctAdapter: ContactListAdapter
     val args: ContactListFragmentArgs by navArgs()
+    var isToSave = false
+
+    /**---After Creating ViewModelFactory START---**/
+    private val viewModel: ContactListViewModel by lazy {
+        val viewModelProviderFactory = ContactListViewModelProviderFactory()
+        ViewModelProvider(this, viewModelProviderFactory)[ContactListViewModel::class.java]
+    }
+
+    /**---After Creating ViewModelFactory FINISH---**/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +51,6 @@ class ContactListFragment : Fragment() {
         // Inflate the layout using DataBinding
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_contact_list, container, false)
-
-        // Initialize ViewModel using ViewModelProvider
-        viewModel = ViewModelProvider(requireActivity())[ContactListViewModel::class.java]
 
         // Bind the ViewModel to the layout
         binding.lifecycleOwner = this
@@ -88,13 +94,24 @@ class ContactListFragment : Fragment() {
         activity?.findViewById<ImageButton>(R.id.btn_arrow_back)?.visibility = VISIBLE
 
         // Observe LiveData for main contact list and update the adapter
-        viewModel.contactList.observe(viewLifecycleOwner) {
-            ctAdapter.submitList(it)
+        viewModel.contactList.observe(viewLifecycleOwner) { ctList ->
+            ctAdapter.submitList(ctList)
+            if (isToSave) {
+                isToSave = false
+                args.objToSave?.let { saveData(it) }
+            }
         }
 
         // Observe LiveData for filtered contact search list and update the adapter
         viewModel.contactSearchList.observe(viewLifecycleOwner) {
             ctAdapter.submitList(it)
+        }
+
+        // Observe LiveData for filtered contact search list and update the adapter
+        viewModel.refreshContactList.observe(viewLifecycleOwner) {
+            if (it) {
+                viewModel.initiateContactsList()
+            }
         }
 
         // Set up search input listener
@@ -135,9 +152,7 @@ class ContactListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (args.isToSave) {
-            args.objToSave?.let { saveData(it) }
-        }
+        isToSave = args.isToSave
     }
 
     // Function to handle navigation to DetailsFragment
@@ -161,28 +176,17 @@ class ContactListFragment : Fragment() {
         val currentItems = viewModel.contactList.value?.toMutableList() ?: mutableListOf()
 
         // Check if a similar contact already exists
-        if (!currentItems.any { it.phoneNumber == newContact.phoneNumber }) {
-            // Add the new contact to the list
-            currentItems.add(newContact)
+        if (!currentItems.any { it.id == newContact.id }) {
+            /** save in the db **/
+            viewModel.saveContactInDb(newContact)
 
-            // Update the LiveData
-            viewModel.setContactList(currentItems)
-
-            // Update the adapter using DiffUtil
-            ctAdapter.submitList(currentItems.toList())
         } else {
             // Check if a similar contact already exists and get the index of it in the list
-            val index = currentItems.indexOfFirst { it.phoneNumber == newContact.phoneNumber }
+            val index = currentItems.indexOfFirst { it.id == newContact.id }
 
             if (index != -1) {
-                // Update the contact at the specified index
-                currentItems[index] = newContact
-
-                // Update the LiveData
-                viewModel.setContactList(currentItems)
-
-                // Update the adapter using DiffUtil
-                ctAdapter.submitList(currentItems.toList())
+                /** Update the contact in the db **/
+                viewModel.updateContactInDb(newContact)
             }
         }
     }
