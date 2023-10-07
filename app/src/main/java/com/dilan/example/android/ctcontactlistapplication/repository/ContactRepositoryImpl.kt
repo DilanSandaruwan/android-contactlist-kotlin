@@ -48,10 +48,10 @@ class ContactRepositoryImpl(
         return try {
             val rowsAffected = contactDao.insertContact(contactData)
             if (rowsAffected > 0) {
-                Log.e("ADD", "addContactToLocalDb: SUCCEEDED")
+                Log.e("ADD", "addContactToLocalDb: $rowsAffected SUCCEEDED")
                 "succeeded"
             } else {
-                Log.e("ADD", "addContactToLocalDb: FAILED")
+                Log.e("ADD", "addContactToLocalDb: $rowsAffected FAILED")
                 "failed"
             }
         } catch (e: Exception) {

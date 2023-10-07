@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dilan.example.android.ctcontactlistapplication.model.ContactData
 import com.dilan.example.android.ctcontactlistapplication.repository.ContactRepository
-import com.dilan.example.android.ctcontactlistapplication.repository.ContactRepositoryImpl
 import kotlinx.coroutines.launch
 
 /**
@@ -38,6 +37,11 @@ class ContactListViewModel(private val contactRepo: ContactRepository) : ViewMod
 
     // Private MutableLiveData to hold the details of the selected contact.
     private var _selectedContact = MutableLiveData<ContactData?>(null)
+
+    // Private MutableLiveData to trigger navigation to add new contact screen.
+    private var _refreshContactList = MutableLiveData<Boolean>(false)
+    val refreshContactList: LiveData<Boolean>
+        get() = _refreshContactList
 
     /**
      * LiveData property providing the details of the selected contact.
@@ -81,20 +85,27 @@ class ContactListViewModel(private val contactRepo: ContactRepository) : ViewMod
         _navigateToAddNewContact.value = navToDetails
     }
 
+    fun saveContactInDb(contactData: ContactData) {
+        viewModelScope.launch {
+            val response = contactRepo.insertContact(contactData)
+            Log.e("INSERT", "saveContactInDb: $response")
+            _refreshContactList.postValue(true)
+        }
+    }
+
     /**
      * Create and set an ArrayList of initial contact data.
      */
-    private fun initiateContactsList() {
+    fun initiateContactsList() {
         var contactList: List<ContactData> = mutableListOf()
 
         // Add sample contact data to the list
         viewModelScope.launch {
             contactList = contactRepo.getContacts()
-            Log.e("CONTACTS_LIST", "initiateContactsList: $contactList", )
+            Log.e("CONTACTS_LIST", "initiateContactsList: $contactList")
+            setContactList(contactList)
         }
 
-        // Set the initialized contact list
-        setContactList(contactList)
     }
 
     init {

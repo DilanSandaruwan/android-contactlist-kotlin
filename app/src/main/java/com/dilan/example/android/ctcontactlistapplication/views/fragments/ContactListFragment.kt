@@ -102,6 +102,13 @@ class ContactListFragment : Fragment() {
             ctAdapter.submitList(it)
         }
 
+        // Observe LiveData for filtered contact search list and update the adapter
+        viewModel.refreshContactList.observe(viewLifecycleOwner) {
+            if(it){
+                viewModel.initiateContactsList()
+            }
+        }
+
         // Set up search input listener
         binding.searchInputText
             .setOnEditorActionListener { editText, action, _ ->
@@ -167,14 +174,9 @@ class ContactListFragment : Fragment() {
 
         // Check if a similar contact already exists
         if (!currentItems.any { it.phoneNumber == newContact.phoneNumber }) {
-            // Add the new contact to the list
-            currentItems.add(newContact)
+            /** save in the db **/
+            viewModel.saveContactInDb(newContact)
 
-            // Update the LiveData
-            viewModel.setContactList(currentItems)
-
-            // Update the adapter using DiffUtil
-            ctAdapter.submitList(currentItems.toList())
         } else {
             // Check if a similar contact already exists and get the index of it in the list
             val index = currentItems.indexOfFirst { it.phoneNumber == newContact.phoneNumber }
