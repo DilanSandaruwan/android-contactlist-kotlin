@@ -29,6 +29,7 @@ class ContactListFragment : Fragment() {
     lateinit var binding: FragmentContactListBinding
     lateinit var ctAdapter: ContactListAdapter
     val args: ContactListFragmentArgs by navArgs()
+    var isToSave = false
 
     /**---After Creating ViewModelFactory START---**/
     private val viewModel: ContactListViewModel by lazy {
@@ -93,8 +94,12 @@ class ContactListFragment : Fragment() {
         activity?.findViewById<ImageButton>(R.id.btn_arrow_back)?.visibility = VISIBLE
 
         // Observe LiveData for main contact list and update the adapter
-        viewModel.contactList.observe(viewLifecycleOwner) {
-            ctAdapter.submitList(it)
+        viewModel.contactList.observe(viewLifecycleOwner) { ctList ->
+            ctAdapter.submitList(ctList)
+            if (isToSave) {
+                isToSave = false
+                args.objToSave?.let { saveData(it) }
+            }
         }
 
         // Observe LiveData for filtered contact search list and update the adapter
@@ -104,7 +109,7 @@ class ContactListFragment : Fragment() {
 
         // Observe LiveData for filtered contact search list and update the adapter
         viewModel.refreshContactList.observe(viewLifecycleOwner) {
-            if(it){
+            if (it) {
                 viewModel.initiateContactsList()
             }
         }
@@ -147,9 +152,7 @@ class ContactListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (args.isToSave) {
-            args.objToSave?.let { saveData(it) }
-        }
+        isToSave = args.isToSave
     }
 
     // Function to handle navigation to DetailsFragment
@@ -173,23 +176,17 @@ class ContactListFragment : Fragment() {
         val currentItems = viewModel.contactList.value?.toMutableList() ?: mutableListOf()
 
         // Check if a similar contact already exists
-        if (!currentItems.any { it.phoneNumber == newContact.phoneNumber }) {
+        if (!currentItems.any { it.id == newContact.id }) {
             /** save in the db **/
             viewModel.saveContactInDb(newContact)
 
         } else {
             // Check if a similar contact already exists and get the index of it in the list
-            val index = currentItems.indexOfFirst { it.phoneNumber == newContact.phoneNumber }
+            val index = currentItems.indexOfFirst { it.id == newContact.id }
 
             if (index != -1) {
-                // Update the contact at the specified index
-                currentItems[index] = newContact
-
-                // Update the LiveData
-                viewModel.setContactList(currentItems)
-
-                // Update the adapter using DiffUtil
-                ctAdapter.submitList(currentItems.toList())
+                /** Update the contact in the db **/
+                viewModel.updateContactInDb(newContact)
             }
         }
     }

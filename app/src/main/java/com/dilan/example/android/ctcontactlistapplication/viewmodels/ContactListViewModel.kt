@@ -38,17 +38,17 @@ class ContactListViewModel(private val contactRepo: ContactRepository) : ViewMod
     // Private MutableLiveData to hold the details of the selected contact.
     private var _selectedContact = MutableLiveData<ContactData?>(null)
 
-    // Private MutableLiveData to trigger navigation to add new contact screen.
-    private var _refreshContactList = MutableLiveData<Boolean>(false)
-    val refreshContactList: LiveData<Boolean>
-        get() = _refreshContactList
-
     /**
      * LiveData property providing the details of the selected contact.
      */
     @get:Bindable
     val selectedContact: LiveData<ContactData?>
         get() = _selectedContact
+
+    // Private MutableLiveData to trigger to load contacts list freshly.
+    private var _refreshContactList = MutableLiveData<Boolean>(false)
+    val refreshContactList: LiveData<Boolean>
+        get() = _refreshContactList
 
     /**
      * Set the main list of contacts.
@@ -85,10 +85,28 @@ class ContactListViewModel(private val contactRepo: ContactRepository) : ViewMod
         _navigateToAddNewContact.value = navToDetails
     }
 
+    /**
+     * Saves the given [contactData] into the database using a background coroutine.
+     *
+     * @param contactData The contact data to be saved.
+     */
     fun saveContactInDb(contactData: ContactData) {
         viewModelScope.launch {
             val response = contactRepo.insertContact(contactData)
             Log.e("INSERT", "saveContactInDb: $response")
+            _refreshContactList.postValue(true)
+        }
+    }
+
+    /**
+     * Updates the given [contactData] in the database using a background coroutine.
+     *
+     * @param contactData The contact data to be updated.
+     */
+    fun updateContactInDb(contactData: ContactData) {
+        viewModelScope.launch {
+            val response = contactRepo.updateContact(contactData)
+            Log.e("UPDATE", "updateContactInDb: $response")
             _refreshContactList.postValue(true)
         }
     }
